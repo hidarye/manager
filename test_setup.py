@@ -26,6 +26,13 @@ def test_imports():
         return False
     
     try:
+        import psycopg2
+        print("✅ psycopg2-binary (PostgreSQL driver)")
+    except ImportError:
+        print("❌ psycopg2-binary - run: pip install psycopg2-binary")
+        return False
+    
+    try:
         import dotenv
         print("✅ python-dotenv")
     except ImportError:
@@ -66,6 +73,16 @@ def test_env_config():
         return False
     else:
         print("✅ ADMIN_USER_ID configured")
+    
+    database_url = os.getenv('DATABASE_URL')
+    if not database_url or 'username:password' in database_url:
+        print("❌ DATABASE_URL not configured properly")
+        print("Please run: python setup_postgres.py")
+        return False
+    elif database_url.startswith('postgresql://'):
+        print("✅ PostgreSQL DATABASE_URL configured")
+    else:
+        print("⚠️  DATABASE_URL configured but not PostgreSQL format")
     
     return True
 

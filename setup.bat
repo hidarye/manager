@@ -45,9 +45,11 @@ echo.
 echo 🎉 Setup completed successfully!
 echo.
 echo 📋 Next steps:
-echo 1. Make sure your .env file has the correct BOT_TOKEN and ADMIN_USER_ID
-echo 2. Run the bot with: python start.py
-echo    or: python bot.py
+echo 1. Install and setup PostgreSQL database
+echo 2. Run: python setup_postgres.py
+echo 3. Make sure your .env file has the correct BOT_TOKEN and ADMIN_USER_ID
+echo 4. Test setup: python test_setup.py
+echo 5. Run the bot with: python start.py
 echo.
 echo 📚 For detailed instructions, see README.md
 echo.

@@ -40,6 +40,18 @@ else
     exit 1
 fi
 
+# Check PostgreSQL installation
+echo "🐘 Checking PostgreSQL installation..."
+if command -v psql &> /dev/null; then
+    echo "✅ PostgreSQL is installed"
+else
+    echo "⚠️  PostgreSQL not found. Please install PostgreSQL:"
+    echo "- Ubuntu/Debian: sudo apt install postgresql postgresql-contrib"
+    echo "- CentOS/RHEL: sudo yum install postgresql-server postgresql-contrib"
+    echo "- macOS: brew install postgresql"
+    echo ""
+fi
+
 # Create .env file if it doesn't exist
 if [ ! -f .env ]; then
     echo "📝 Creating .env file..."
@@ -74,9 +86,10 @@ echo ""
 echo "🎉 Setup completed successfully!"
 echo ""
 echo "📋 Next steps:"
-echo "1. Make sure your .env file has the correct BOT_TOKEN and ADMIN_USER_ID"
-echo "2. Run the bot with: python3 start.py"
-echo "   or: python3 bot.py"
+echo "1. Set up PostgreSQL database: python3 setup_postgres.py"
+echo "2. Make sure your .env file has the correct BOT_TOKEN and ADMIN_USER_ID"
+echo "3. Test setup: python3 test_setup.py"
+echo "4. Run the bot with: python3 start.py"
 echo ""
 echo "📚 For detailed instructions, see README.md"
 echo ""

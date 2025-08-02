@@ -44,6 +44,7 @@
 ```bash
 Python 3.8+
 pip (Python package manager)
+PostgreSQL 12+ (قاعدة البيانات)
 ```
 
 ### 2. تحميل المشروع
@@ -52,12 +53,47 @@ git clone <repository-url>
 cd telegram-channel-bot
 ```
 
-### 3. تثبيت المتطلبات
+### 3. تثبيت PostgreSQL
+#### Ubuntu/Debian:
+```bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+#### CentOS/RHEL:
+```bash
+sudo yum install postgresql-server postgresql-contrib
+sudo postgresql-setup initdb
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+#### macOS:
+```bash
+brew install postgresql
+brew services start postgresql
+```
+
+#### Windows:
+قم بتحميل وتثبيت PostgreSQL من [الموقع الرسمي](https://www.postgresql.org/download/windows/)
+
+### 4. تثبيت متطلبات Python
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. إعداد البيئة
+### 5. إعداد قاعدة البيانات
+```bash
+# إعداد قاعدة البيانات تلقائياً
+python setup_postgres.py
+
+# أو إعداد يدوي باستخدام psql
+sudo -u postgres psql -f setup_database.sql
+```
+
+### 6. إعداد البيئة
 ```bash
 cp .env.example .env
 ```
@@ -65,24 +101,29 @@ cp .env.example .env
 قم بتعديل ملف `.env` وإضافة:
 ```env
 BOT_TOKEN=your_bot_token_here
-DATABASE_URL=sqlite:///bot_database.db
+DATABASE_URL=postgresql://bot_user:secure_bot_password_123@localhost:5432/telegram_bot_db
 ADMIN_USER_ID=your_telegram_user_id
 ```
 
-### 5. الحصول على Bot Token
+### 7. الحصول على Bot Token
 1. تحدث مع [@BotFather](https://t.me/BotFather) في التلقرام
 2. أرسل `/newbot`
 3. اتبع التعليمات لإنشاء البوت
 4. احصل على Token وضعه في ملف `.env`
 
-### 6. الحصول على User ID
+### 8. الحصول على User ID
 1. تحدث مع [@userinfobot](https://t.me/userinfobot)
 2. احصل على User ID الخاص بك
 3. ضعه في ملف `.env` كـ `ADMIN_USER_ID`
 
-### 7. تشغيل البوت
+### 9. اختبار الإعداد
 ```bash
-python bot.py
+python test_setup.py
+```
+
+### 10. تشغيل البوت
+```bash
+python start.py
 ```
 
 ## 📱 كيفية الاستخدام
@@ -134,16 +175,23 @@ python bot.py
 
 ```
 telegram-channel-bot/
-├── bot.py              # الملف الرئيسي للبوت
-├── database.py         # نماذج قاعدة البيانات
-├── requirements.txt    # متطلبات Python
-├── .env.example       # مثال على ملف البيئة
-├── .env              # ملف البيئة (يُنشأ يدوياً)
-├── README.md         # هذا الملف
-└── bot_database.db   # قاعدة البيانات (تُنشأ تلقائياً)
+├── bot.py                 # الملف الرئيسي للبوت
+├── database.py            # نماذج قاعدة البيانات
+├── setup_postgres.py     # سكريبت إعداد PostgreSQL
+├── setup_database.sql    # سكريبت SQL لإعداد قاعدة البيانات
+├── start.py              # سكريبت التشغيل مع فحص البيئة
+├── test_setup.py         # سكريبت اختبار الإعداد
+├── requirements.txt      # متطلبات Python
+├── setup.sh             # سكريبت الإعداد (Linux/Mac)
+├── setup.bat            # سكريبت الإعداد (Windows)
+├── .env.example         # مثال على ملف البيئة
+├── .env                # ملف البيئة (يُنشأ يدوياً)
+└── README.md           # هذا الملف
 ```
 
 ## 🔧 قاعدة البيانات
+
+يستخدم البوت **PostgreSQL** كقاعدة بيانات رئيسية لضمان الأداء والاستقرار.
 
 ### جداول قاعدة البيانات:
 
@@ -160,6 +208,22 @@ telegram-channel-bot/
 #### `bot_settings`
 - إعدادات عامة للبوت
 
+### إعداد قاعدة البيانات:
+
+#### الطريقة التلقائية:
+```bash
+python setup_postgres.py
+```
+
+#### الطريقة اليدوية:
+```bash
+# الدخول إلى PostgreSQL
+sudo -u postgres psql
+
+# تنفيذ سكريبت الإعداد
+\i setup_database.sql
+```
+
 ## 🛡️ الأمان
 
 - البوت يعمل فقط مع المستخدم المحدد في `ADMIN_USER_ID`
@@ -171,6 +235,11 @@ telegram-channel-bot/
 ### البوت لا يرد:
 - تأكد من صحة `BOT_TOKEN`
 - تأكد من تشغيل البوت (`python bot.py`)
+
+### خطأ في قاعدة البيانات:
+- تأكد من تشغيل PostgreSQL: `sudo systemctl status postgresql`
+- تحقق من صحة DATABASE_URL في ملف `.env`
+- قم بتشغيل: `python setup_postgres.py`
 
 ### لا يمكن إضافة قناة:
 - تأكد من إضافة البوت كمشرف في القناة

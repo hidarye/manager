@@ -51,8 +51,8 @@ class BotSettings(Base):
     value = Column(Text, nullable=False)
 
 # Database setup
-DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///bot_database.db')
-engine = create_engine(DATABASE_URL)
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://username:password@localhost:5432/telegram_bot')
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def create_tables():
